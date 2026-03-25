@@ -4,7 +4,6 @@
 #@Author: RB
 #@version 0.1
 
-
 BLUE='\033[1;36m'
 RED='\033[1;31m'
 GREEN='\033[1;32m'
@@ -12,10 +11,6 @@ NC='\033[0m'
 
 set -e
 set -o pipefail
-
-echo -e "${GREEN}[*] ${NC}"
-
-#!/bin/bash
 
 # Directory to scan (default: current directory if not provided)
 DIR="${1:-.}"
