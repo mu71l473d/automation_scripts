@@ -5,7 +5,7 @@ Will create a hotspot with name Kiwa-Hotspot by default.
 dcode64 decodes a string with base64
 
 ## ezfind
-uses find to find files and folders. Capital insensitive and skip errors.
+uses find to find files and folders. Capital insensitive and skip errors. will run sudo find / -iname "<value>"
 
 ## fix-apt
 if you have apt problems i feel bad for you son. I've got 99 problems and apt is also one (but this script will most likely solve it)
