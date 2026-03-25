@@ -1,5 +1,5 @@
 ## create-hotspot / remove-hotspot
-Will create a hotspot with name Kiwa-Hotspot by default. 
+Will create a hotspot with name Kali-Hotspot by default. 
 
 ## dcode64 
 dcode64 decodes a string with base64
