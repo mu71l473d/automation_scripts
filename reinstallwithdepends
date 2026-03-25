@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#@Author: RB
+#@Version: 0.1
+
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+echo -e "${GREEN}[*] Trying to reinstall $@ with its dependencies ${NC}"
+echo -e "${GREEN}[*] This can take a long time ${NC}"
+
+for i in $@; do	
+	echo -e "${GREEN}[*] Trying to reinstall $1 with its dependencies ${NC}"
+	sudo apt -o Dpkg::Options::="--force-confmiss" install -y "$i"
+  	sudo apt-cache depends "$1" | grep '[ |]Depends: [^<]' | cut -d: -f2 | tr -d ' ' | xargs sudo NEEDRESTART_MODE=a apt -o Dpkg::Options::="--force-confmiss" --reinstall install -y
+done

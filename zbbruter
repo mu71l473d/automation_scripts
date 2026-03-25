@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#A simple script
+#@Author: RB
+#@version 0.1
+
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+
+echo -e "${GREEN}[*] A zigbee channel bruter by trying all channels and looking for beacons ${NC}"
+for i in {15..26}; do 
+    echo -e "${BLUE} Trying channel $i ${NC}" 
+    zbdump -d apimote -i /dev/ttyUSB0 -n 1 -c $i -w ~/zbchannel$1.pcap
+done

@@ -1,0 +1,16 @@
+#!/bin/bash
+#@Author: RB
+#@Version: 0.1
+
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+echo -e "${GREEN}[*]setting flameshot folder to $(pwd).${NC}"
+if [ $# -eq 0 ]
+  then
+    echo -e "${GREEN}[*] No path supplied so choosing the current working directory: $(pwd).${NC}"
+    sed -i -r "s|^savePath=.*|savePath=$(pwd)/|g" ~/.config/flameshot/flameshot.ini
+  else
+    echo -e "${GREEN}[*] $1 was specified so using that as the flameshot folder.${NC}"
+    sed -i -r "s|^savePath=.*|savePath=$1/|g"
+fi

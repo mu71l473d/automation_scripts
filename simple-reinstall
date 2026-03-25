@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#@Author: RB
+#@Version: 0.1
+
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+echo -e "${GREEN}[*] Trying to reinstall $@ ${NC}"
+sudo NEEDRESTART_MODE=a aptitude reinstall -y $@

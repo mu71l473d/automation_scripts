@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#A simple script
+#@Author: RB
+#@version 0.1
+
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+set -e
+set -o pipefail
+
+echo -e "${GREEN}[*] ${NC}"
+
+#!/bin/bash
+
+# Directory to scan (default: current directory if not provided)
+DIR="${1:-.}"
+
+# Log file name (timestamped)
+LOG_FILE="filehashes_sha256_log_$(date +%Y%m%d_%H%M%S).txt"
+
+echo -e "${GREEN}[*]Starting SHA-256 hash calculation...${NC}" 
+echo -e "${GREEN}[*]Directory: $DIR ${NC}"
+echo -e "${GREEN}[*]Timestamp: $(date)${NC}"
+echo -e "${GREEN}[*]----------------------------------------${NC}\n"
+
+# Find all regular files and compute hashes
+find "$DIR" -type f | while read -r file; do
+    sha256sum "$file" |tee "$LOG_FILE"
+done
+
+echo -e "${GREEN}[*]Hashing complete.${NC}"
+echo -e "${GREEN}[*]Done. Results saved to $LOG_FILE${NC}"

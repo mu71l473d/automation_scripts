@@ -1,0 +1,38 @@
+#!/bin/bash
+
+#A simple script
+#@Author: RB
+#@version 0.1
+
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+set -e
+set -o pipefail
+
+# Parameters with defaults
+FOLDER_PATH="${1:-$(pwd)}"
+OUTPUT_FILE="${2:-$(pwd)/filenames.txt}"
+OUTPUT_FILE_TYPST="${3:-$(pwd)/filenames-typst.txt}"
+
+# Ensure folder path has no trailing slash
+FOLDER_PATH="${FOLDER_PATH%/}"
+
+# Find all files recursively and process them
+find "$FOLDER_PATH" -type f | while read -r file; do
+    # Create relative path
+    rel_path="${file#$FOLDER_PATH/}"
+
+    # Write to first file (just "- <relative path>")
+    echo "- $rel_path" >> "$OUTPUT_FILE"
+
+    # Write to second file (always "- ./<relative path>")
+    echo "- ./$rel_path" >> "$OUTPUT_FILE_TYPST"
+done
+
+echo -e "${GREEN}[*] Relative file paths written to:${NC}"
+echo -e "${GREEN}[*]   $OUTPUT_FILE${NC}"
+echo -e "${GREEN}[*]   $OUTPUT_FILE_TYPST${NC}"

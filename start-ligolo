@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#@Author: RB
+#@Version: 0.1
+
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+echo -e "${GREEN} [*] Starts up useful ligolo stuff${NC}"
+
+sudo ip tuntap add user $USER mode tun ligolo
+sudo ip link set ligolo up

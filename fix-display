@@ -1,0 +1,43 @@
+#!/bin/bash
+
+#@Author: RB
+#@version 0.2
+
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+set -e
+set -o pipefail
+
+echo -e "${GREEN}[*] Checking the display manager and writing it to ~/displayinfo.log ${NC}"
+echo "[*] Status display-manager.service" > ~/displayinfo.log
+systemctl status display-manager.service | tee -a ~/displayinfo.log
+
+echo -e "${GREEN}[*] checking default interface (should be graphical.target)${NC}"
+echo "[*] systemctl get-default (should be graphical.target)" >> ~/displayinfo.log
+systemctl get-default | tee -a ~/displayinfo.log  
+
+echo -e "${GREEN}[*] checking status of graphical.target${NC}"
+echo "[*] status graphical.target " >> ~/displayinfo.log
+systemctl status graphical.target | tee -a ~/displayinfo.log
+
+echo -e "${GREEN}[*] checking getty${NC}"
+echo "[*] status getty@tty1.service" >> ~/displayinfo.log
+systemctl status getty@tty1.service | tee -a ~/displayinfo.log
+
+echo -e "${GREEN}[*] checking journalctl${NC}"
+echo "[*] journalctl -b" >> ~/displayinfo.log
+sudo journalctl -b | tee -a ~/displayinfo.log
+
+echo -e "${GREEN}[*] checking lightdm log${NC}"
+echo "[*] /var/log/lightdm/lightdm.log" >> ~/displayinfo.log
+sudo cat /var/log/lightdm/lightdm.log | tee -a ~/displayinfo.log
+
+echo -e "${GREEN}[*] checking Xorg log${NC}"
+echo "[*] /var/log/Xorg.0.log " >> ~/displayinfo.log
+sudo cat /var/log/Xorg.0.log | tee -a ~/displayinfo.log
+
+

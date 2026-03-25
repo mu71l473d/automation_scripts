@@ -1,0 +1,19 @@
+#!/bin/bash
+
+#A simple script
+#@Author: RB
+#@version 0.1
+
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+set -e
+set -o pipefail
+
+
+echo -e "${GREEN}[*] Deleting hotspot with name $1 ${NC}"
+HOTSPOT_UUIDS=$(nmcli connection show | grep -i "$1" | grep -E -o '[0-9a-f\-]{36}')
+while IFS= read -r UUID; do nmcli connection delete $UUID; done <<< "$HOTSPOT_UUIDS" 

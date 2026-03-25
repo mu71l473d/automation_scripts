@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#@Author: RB
+#@Version: 0.1
+# A simple script to start the impacket-smbserver. Can use a custom password and warns when not in kiwapentest ip range. 
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+eth0ip="$(ip addr show eth0 | grep -Po 'inet \K[\d.]+')"
+eth1ip="$(ip addr show eth1 | grep -Po 'inet \K[\d.]+')"
+wlan0ip="$(ip addr show wlan0 | grep -Po 'inet \K[\d.]+')"
+wlan1ip="$(ip addr show wlan1 | grep -Po 'inet \K[\d.]+')"
+
+echo -e "${GREEN}[*] running impacket-smb-server in $(pwd)${NC}\n"
+echo -e "${GREEN}[*] LAN with IP address: ${BLUE}$eth0ip${NC}"
+echo -e "${GREEN}[*] LAN2 (often the dockingstation) with IP address: ${BLUE}$eth1ip${NC}"
+echo -e "${GREEN}[*] WLAN with IP address: ${BLUE}$wlan0ip${NC}\n"
+echo -e "${GREEN}[*] WLAN! with IP address: ${BLUE}$wlan1ip${NC}\n"
+
+
+if [ -n "$eth0ip" ] || [ -n "$eth1ip" ] || [ -n "$wlan0ip" ] || [ -n "$wlan1ip" ]; then
+	echo -e "${GREEN}[*] Interfaces are not null or empty, so continuing... ${NC}\n"
+else
+    echo -e "${RED}[*] No associated networks were found. Exiting ${NC}\n"
+    exit 1           
+fi
+
+eth0output=$(echo $eth0ip | awk -F "." '{print $1 "." $2}')
+eth1output=$(echo $eth1ip | awk -F "." '{print $1 "." $2}')
+wlan0output=$(echo $wlan0ip | awk -F "." '{print $1 "." $2}')
+wlan1output=$(echo $wlan1ip | awk -F "." '{print $1 "." $2}')cd 
+tempArray=[$eth0output,$eth1output,$wlan0output,$wlan1output]
+
+passwd=$(tr -dc 'A-Za-z0-9!"#$%&'\''()*+,-./:;<=>?@[\]^_`{|}~' </dev/urandom | head -c 6)
+echo -e "${GREEN}[*] Generated a temporary Password: ${BLUE}$passwd  ${NC}"
+
+if printf '%s\0' "${tempArray[@]}" | grep -qz -- "10.1\|10.2"; then
+    echo -e "${GREEN}[*] Kiwa Pentest network ranges are used ${NC}"
+    echo -e "${GREEN}[*] Starting SMB Server ${NC}"
+
+    read -p $'\e[31m[*] Do you want to use the generated password? ' -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        echo -e "${GREEN}[*] Using the generated password ${NC}"
+        password=$passwd
+    else
+        echo -e "${RED}[*] Not using the generated password. Setting it to default. ${NC}"
+        password=$USER
+    fi 
+
+
+    sudo impacket-smbserver -smb2support -user $USER -password $password share "$(pwd)" 
+else
+    echo -e "${RED}[*] Kiwa Pentest network ranges are not used, are you sure you want to continue? ${NC}\n"
+    read -p $'\e[31m[*] Are you sure? ' -n 1 -r
+    echo    # (optional) move to a new line
+    if [[ $REPLY =~ ^[Yy]$ ]]
+    then
+        echo -e "${GREEN}[*] Starting SMB Server ${NC}"
+        sudo impacket-smbserver -smb2support -user $USER -password $password share "$(pwd)" 
+    else
+        echo -e "${RED}[*] Not starting SMB Server ${NC}"
+    fi   
+fi
+
+
+
+

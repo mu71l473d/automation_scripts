@@ -1,0 +1,41 @@
+#!/bin/bash
+
+#@Author: RB
+#@Version: 0.1
+
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+echo -e "${GREEN} [*] A script to reinstall evil-winrm ${NC}"
+
+# Uninstall possible current installed versions
+sudo gem uninstall evil-winrm -q
+gem uninstall evil-winrm -q
+
+# Install rbenv
+sudo apt install rbenv
+
+# Config rbenv on zshrc config file
+echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.zshrc
+echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+source ~/.zshrc
+
+# Install ruby with readline support
+export RUBY_CONFIGURE_OPTS=--with-readline-dir="/usr/include/readline"
+rbenv install 3.1.2
+
+# Create file '.ruby-version' to set right ruby version
+rbenv local 3.1.2
+
+# Install local gems
+gem install bundler
+bundle install
+
+current_evwr="$(pwd)/evil-winrm.rb"
+
+sudo bash -c "cat << 'EOF' > /usr/bin/evil-winrm
+    #!/usr/bin/env sh
+    "${current_evwr}" "\$@"
+EOF"
+
+sudo chmod +x /usr/bin/evil-winrm

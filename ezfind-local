@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#A simple script to find files
+#@Author: RB
+#@version 0.1
+
+
+BLUE='\033[1;36m'
+RED='\033[1;31m'
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+set -e
+set -o pipefail
+
+echo -e "${GREEN}[*] Searching for $1 from $pwd ${NC}"
+sudo find . -iname "$1" 2>/dev/null
+

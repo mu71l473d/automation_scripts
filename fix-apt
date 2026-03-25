@@ -1,0 +1,54 @@
+#!/bin/bash
+
+GREEN='\033[1;32m'
+NC='\033[0m'
+
+echo -e "${GREEN}[*] Trying to fix apt and its install by running dpkg --configure -a ${NC}"
+sudo dpkg --configure -a
+
+echo -e "${GREEN}[*] Trying to fix apt and its install by running apt --fix-missing install ${NC}"
+sudo apt --fix-missing install
+
+echo -e "${GREEN}[*] Trying to install the newest kernel headers ${NC}"
+sudo apt clean
+sudo apt autoremove
+sudo apt update
+sudo apt install linux-headers-generic
+
+echo -e "${GREEN}[*] Updating initramfs and grub ${NC}"
+sudo update-initramfs -k all -u
+sudo update-grub
+
+echo -e "${GREEN}[*] Updating and upgrading apt packages ${NC}"
+sudo apt update
+sudo apt upgrade -y
+
+echo -e "${GREEN}[*] Do you also want to install held-back packages with a full upgrade? This can break some installations. ${NC}"
+read -p "Do you wish to force install them? " yn
+    case $yn in
+        [Yy]* ) echo -e "${GREEN}[*] Continuing with upgrading... ${NC}"; sudo apt full-upgrade -y;;
+        [Nn]* ) echo -e "${GREEN}[*] Continuing without upgrading... ${NC}";;
+        * ) echo "Please answer yes or no.";;
+    esac
+    
+echo -e "${GREEN}[*] Updating initramfs and grub again after apt upgrade and / or full upgrade, just to be sure ;) ${NC}"
+sudo update-initramfs -k all -u
+sudo update-grub
+
+echo -e "${GREEN}[*] If your system is completely FUBAR, you can try a full reinstallation of all apt packages. Warning: This can take a very long time and is equivalent to a full reinstall. Config files might be lost  ${NC}"
+read -p "Do you wish to force reinstall them? " yn
+    case $yn in
+        [Yy]* ) echo -e "${GREEN}[*] Continuing with reinstalling everything... It might also be a good consideration to just completely reinstall your system at this point. ${NC}"; apt list --installed | sed -E 's|([^/]+).*|\1|' > ~/my_package_list.txt && apt -o Dpkg::Options::="--force-confmiss" -y --reinstall install $(<~/my_package_list.txt) && rm ~/my_package_list.txt;;
+        [Nn]* ) echo -e "${GREEN}[*] Continuing without reinstallation... ${NC}";;
+        * ) echo "Please answer yes or no.";;
+    esac
+
+echo -e "${GREEN}[*] In order to fix and finalize the installation you should consider rebooting. ${NC}"
+read -p "Do you wish to reboot? " yn
+    case $yn in
+        [Yy]* ) sudo reboot now; break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+
+
